@@ -12,9 +12,8 @@ class Pizza(db.Model):
     price = db.Column(db.String())
     crust = db.Column(db.String())
 
-    def __init__(self, id, name, size, price, crust):
+    def __init__(self,name, size, price, crust):
         """initialize with name."""
-        self.id =id
         self.name = name
         self.size = size
         self.price = price

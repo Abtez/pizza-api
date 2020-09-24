@@ -26,9 +26,8 @@ def create_app(config_name):
             size = str(request.data.get('size', ''))
             price = str(request.data.get('price', ''))
             crust = str(request.data.get('crust', ''))
-            id = str(request.data.get('id', 1))
             if name:
-                piza = Pizza(id= id,name=name,size=size,price=price,crust=crust)
+                piza = Pizza(name=name,size=size,price=price,crust=crust)
                 piza.save()
                 response = jsonify({
                     'id':piza.id,
