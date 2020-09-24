@@ -23,39 +23,79 @@ def create_app(config_name):
     def pizzas():
         if request.method == "POST":
             name = str(request.data.get('name', ''))
+            size = str(request.data.get('size', ''))
+            price = str(request.data.get('price', ''))
+            crust = str(request.data.get('crust', ''))
+            id = str(request.data.get('id', 1))
             if name:
-                pizzas = Pizza(name=name)
-                pizzas.save()
+                piza = Pizza(id= id,name=name,size=size,price=price,crust=crust)
+                piza.save()
                 response = jsonify({
-                    'id': pizzas.id,
-                    'name': pizzas.name,
-                    'order_time': pizzas.order_time,
-                    'date_modified': pizzas.date_modified,
-                    'size':pizzas.size,
-                    'price':pizzas.price,
-                    'crust':pizzas.crust,
+                    'id':piza.id,
+                    'name':piza.name,
+                    'size':piza.size,
+                    'price':piza.price,
+                    'crust':piza.crust,
                 })
                 response.status_code = 201
                 return response
         else:
             # GET
-            pizzas = Pizza.get_all()
+            piza = Pizza.get_all()
             results = []
 
-            for items in pizzas:
+            for items in piza:
                 obj = {
-                     'id': pizzas.id,
-                    'name': pizzas.name,
-                    'order_time': pizzas.order_time,
-                    'date_modified': pizzas.date_modified,
-                    'size':pizzas.size,
-                    'price':pizzas.price,
-                    'crust':pizzas.crust,
+                     'id':items.id,
+                    'name':items.name,
+                    'size':items.size,
+                    'price':items.price,
+                    'crust':items.crust,
                 }
                 results.append(obj)
             response = jsonify(results)
             response.status_code = 200
             return response
+    
+    @app.route('/pizzas/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+    def pizzas_manipulation(id, **kwargs):
+     # retrieve a pizza using it's ID
+        piza = Pizza.query.filter_by(id=id).first()
+        if not piza:
+            # Raise an HTTPException with a 404 not found status code
+            abort(404)
+
+        if request.method == 'DELETE':
+            piza.delete()
+            return {
+            "message": "pizza {} deleted successfully".format(piza.id) 
+         }, 200
+
+        elif request.method == 'PUT':
+            name = str(request.data.get('name', ''))
+            piza.name = name
+            piza.save()
+            response = jsonify({
+                'id':piza.id,
+                'name':piza.name,
+                'size':piza.size,
+                'price':piza.price,
+                'crust':piza.crust,
+            })
+            response.status_code = 200
+            return response
+        else:
+            # GET
+            response = jsonify({
+                'id':piza.id,
+                'name':piza.name,
+                'size':piza.size,
+                'price':piza.price,
+                'crust':piza.crust,
+            })
+            response.status_code = 200
+            return response
+
 
 
     return app

@@ -1,5 +1,5 @@
 from app import db
-
+from datetime import datetime
 
 class Pizza(db.Model):
     """This class represents the bucketlist table."""
@@ -8,16 +8,14 @@ class Pizza(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
-    order_time = db.Column(db.DateTime, default=db.func.current_timestamp())
     size = db.Column(db.String())
     price = db.Column(db.String())
     crust = db.Column(db.String())
 
-    def __init__(self, name):
+    def __init__(self, id, name, size, price, crust):
         """initialize with name."""
         self.id =id
         self.name = name
-        self.order_time=order_time
         self.size = size
         self.price = price
         self.crust= crust        
