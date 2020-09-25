@@ -1,6 +1,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
+from flask_cors import CORS
 
 # local import
 from instance.config import app_config
@@ -14,6 +15,7 @@ def create_app(config_name):
     from app.models import Pizza
     
     app = FlaskAPI(__name__, instance_relative_config=True)
+    cors = CORS(app)
     app.config.from_object(app_config[config_name])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -42,6 +44,7 @@ def create_app(config_name):
             # GET
             piza = Pizza.get_all()
             results = []
+            results_obj = {}
 
             for items in piza:
                 obj = {
@@ -51,8 +54,9 @@ def create_app(config_name):
                     'price':items.price,
                     'crust':items.crust,
                 }
-                results.append(obj)
-            response = jsonify(results)
+                results_obj["results"] = results
+                results_obj.append(obj)
+            response = jsonify(results_obj)
             response.status_code = 200
             return response
     
